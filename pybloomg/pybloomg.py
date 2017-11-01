@@ -71,7 +71,7 @@ class BloomgFilter(object):
         req = self._make_key_request(self.name, key)
         resp = self.conn.Add(req)
         if resp and resp.Status == 0:
-            return true
+            return True
         raise BloomgError("add failed: %s" % self.name)
 
 
@@ -79,7 +79,7 @@ class BloomgFilter(object):
         req = self._make_key_request(self.name, keys)
         resp = self.conn.Add(req)
         if resp and resp.Status == 0:
-            return true
+            return True
         raise BloomgError("add failed: %s" % self.name)
 
 
@@ -113,7 +113,7 @@ class BloomgFilter(object):
         req = self._make_key_request(self.name, key)
         resp = self.conn.Has(req)
         if resp:
-            return resp.Has
+            return resp.Has[0]
         raise BloomgError("has failed: %s %s" % (self.name, key))
 
 
@@ -154,6 +154,17 @@ class BloomgPipeline(object):
         self.buf = []
         self.type = ""
 
+    def _make_key_request(self, name, keys):
+        req = KeyRequest()
+        req.Name = name
+        if isinstance(keys, str):
+            keys = [keys]
+        for key in keys:
+            if not isinstance(key, str):
+                raise Exception("Invalid key type {}, must be string", type(key))
+            req.Keys.append(key)
+        return req
+
     def bulk(self, keys):
         "Performs a bulk set command, adds multiple keys in the filter"
         self.type = "bulk"
@@ -176,7 +187,7 @@ class BloomgPipeline(object):
 
 
     def execute(self):
-         """
+        """
         Executes the pipelined commands. All commands are sent to
         the server in the order issued, and responses are returned
         in appropriate order.
@@ -194,12 +205,14 @@ class BloomgPipeline(object):
                     all_resp.append(BloomgError("pipeline bulk failed: %s" % name))
             
         elif self.type == "multi":
-            req = self._make_key_request(name, keys)
-            resp = self.conn.Has(req)
-            if resp:
-                all_resp.append(resp.Has) 
-            else:
-                all_resp.append(BloomgError("pipeline multi failed: %s" % name))
+            for name, keys in buf:
+                req = self._make_key_request(name, keys)
+                resp = self.conn.Has(req)
+                if resp and resp.Has:
+                    for has in resp.Has:
+                        all_resp.append(has)
+                else:
+                    all_resp.append(BloomgError("pipeline multi failed: %s" % name))
         else:
             raise Exception("Unknown command!")
 
