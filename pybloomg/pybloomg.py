@@ -1,3 +1,6 @@
+"""
+This module implements a client for the Bloomg server.
+"""
 from grpc import insecure_channel
 
 from bloomgpb_pb2 import (
@@ -53,6 +56,7 @@ class BloomgFilter(object):
         """
         self.conn = conn
         self.name = name
+        self.hash_keys = False
 
 
     def _make_key_request(self, name, keys):
@@ -96,7 +100,7 @@ class BloomgFilter(object):
         """
         Closes the filter on the server.
         """
-        
+
         raise BloomgError("close is not supported on bloomg!")
 
 
@@ -154,17 +158,6 @@ class BloomgPipeline(object):
         self.buf = []
         self.type = ""
 
-    def _make_key_request(self, name, keys):
-        req = KeyRequest()
-        req.Name = name
-        if isinstance(keys, str):
-            keys = [keys]
-        for key in keys:
-            if not isinstance(key, str):
-                raise Exception("Invalid key type {}, must be string", type(key))
-            req.Keys.append(key)
-        return req
-
     def bulk(self, keys):
         "Performs a bulk set command, adds multiple keys in the filter"
         self.type = "bulk"
@@ -186,6 +179,18 @@ class BloomgPipeline(object):
         return self
 
 
+    def _make_key_request(self, name, keys):
+        req = KeyRequest()
+        req.Name = name
+        if isinstance(keys, str):
+            keys = [keys]
+        for key in keys:
+            if not isinstance(key, str):
+                raise Exception("Invalid key type {}, must be string", type(key))
+            req.Keys.append(key)
+        return req
+
+
     def execute(self):
         """
         Executes the pipelined commands. All commands are sent to
@@ -203,7 +208,7 @@ class BloomgPipeline(object):
                 resp = self.conn.Add(req)
                 if not resp or resp.Status != 0:
                     all_resp.append(BloomgError("pipeline bulk failed: %s" % name))
-            
+
         elif self.type == "multi":
             for name, keys in buf:
                 req = self._make_key_request(name, keys)
@@ -218,5 +223,3 @@ class BloomgPipeline(object):
 
 
         return all_resp
-
-
