@@ -1,11 +1,24 @@
-from setuptools import setup
+from setuptools import setup, Command
 
 setup(name='pybloomg',
-      version="1.1.0",
-      description='Python client of Bloomg',
+      version="1.1.7",
+      description='Client library to interface with bloomg server',
       author='Thomas Wang',
       author_email='thomas@kiip.me',
-      license='MIT',
+      maintainer='Thomas Wang',
+      maintainer_email='thomas@kiip.me',
+      license="MIT License",
+      keywords=["bloom", "filter","client","bloomg"],
       packages=['pybloomg'],
       py_modules=['pybloomg'],
-      zip_safe=False)
+      classifiers=[
+            "Development Status :: 4 - Beta",
+            "Intended Audience :: Developers",
+            "License :: OSI Approved :: MIT License",
+            "Operating System :: POSIX",
+            "Programming Language :: Python",
+            "Topic :: Database",
+            "Topic :: Internet",
+            "Topic :: Software Development :: Libraries",
+      ]
+      )
