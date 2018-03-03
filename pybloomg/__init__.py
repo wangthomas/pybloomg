@@ -1,1 +1,1 @@
-from pybloomg import BloomgClient
+from pybloomg import BloomgClient, BloomgError

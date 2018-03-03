@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='bloomgpb.proto',
   package='bloomgpb',
   syntax='proto3',
-  serialized_pb=_b('\n\x0e\x62loomgpb.proto\x12\x08\x62loomgpb\"\x1d\n\rFilterRequest\x12\x0c\n\x04Name\x18\x01 \x01(\t\"J\n\nKeyRequest\x12\x11\n\tOperation\x18\x01 \x01(\t\x12\x0c\n\x04Name\x18\x02 \x01(\t\x12\x0c\n\x04Keys\x18\x03 \x03(\t\x12\r\n\x05Token\x18\x04 \x01(\t\"\r\n\x0bListRequest\"\x11\n\x0fShutdownRequest\",\n\x08Response\x12 \n\x06Status\x18\x01 \x01(\x0e\x32\x10.bloomgpb.Status\"<\n\x0bHasResponse\x12 \n\x06Status\x18\x01 \x01(\x0e\x32\x10.bloomgpb.Status\x12\x0b\n\x03Has\x18\x02 \x03(\x08\"\x1d\n\x0cListResponse\x12\r\n\x05Names\x18\x01 \x03(\t\"1\n\x0cInfoResponse\x12!\n\x07\x46ilters\x18\x01 \x03(\x0b\x32\x10.bloomgpb.Filter\"y\n\x06\x46ilter\x12\x0c\n\x04Name\x18\x01 \x01(\t\x12\x10\n\x08\x43\x61pacity\x18\x02 \x01(\x03\x12\x0c\n\x04Hits\x18\x03 \x01(\x03\x12\x0e\n\x06Misses\x18\x04 \x01(\x03\x12\x0e\n\x06\x43hecks\x18\x05 \x01(\x03\x12\x13\n\x0bProbability\x18\x06 \x01(\x01\x12\x0c\n\x04Keys\x18\x07 \x01(\x03*\"\n\x06Status\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x32\x8a\x04\n\x05\x42loom\x12=\n\x0c\x43reateFilter\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12>\n\x0bListFilters\x12\x15.bloomgpb.ListRequest\x1a\x16.bloomgpb.ListResponse\"\x00\x12\x37\n\x04Info\x12\x15.bloomgpb.ListRequest\x1a\x16.bloomgpb.InfoResponse\"\x00\x12\x31\n\x03\x41\x64\x64\x12\x14.bloomgpb.KeyRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x34\n\x03Has\x12\x14.bloomgpb.KeyRequest\x1a\x15.bloomgpb.HasResponse\"\x00\x12\x36\n\x05\x43lear\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x35\n\x04\x44rop\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x34\n\x05\x46lush\x12\x15.bloomgpb.ListRequest\x1a\x12.bloomgpb.Response\"\x00\x12;\n\x08Shutdown\x12\x19.bloomgpb.ShutdownRequest\x1a\x12.bloomgpb.Response\"\x00\x42\x11Z\x0f\x64omain/bloomgpbb\x06proto3')
+  serialized_pb=_b('\n\x0e\x62loomgpb.proto\x12\x08\x62loomgpb\"\x1d\n\rFilterRequest\x12\x0c\n\x04Name\x18\x01 \x01(\t\"_\n\nKeyRequest\x12&\n\tOperation\x18\x01 \x01(\x0e\x32\x13.bloomgpb.Operation\x12\x0c\n\x04Name\x18\x02 \x01(\t\x12\x0c\n\x04Keys\x18\x03 \x03(\t\x12\r\n\x05Token\x18\x04 \x01(\t\"\r\n\x0bListRequest\"\x11\n\x0fShutdownRequest\",\n\x08Response\x12 \n\x06Status\x18\x01 \x01(\x0e\x32\x10.bloomgpb.Status\"<\n\x0bHasResponse\x12 \n\x06Status\x18\x01 \x01(\x0e\x32\x10.bloomgpb.Status\x12\x0b\n\x03Has\x18\x02 \x03(\x08\"\x1d\n\x0cListResponse\x12\r\n\x05Names\x18\x01 \x03(\t\"1\n\x0cInfoResponse\x12!\n\x07\x46ilters\x18\x01 \x03(\x0b\x32\x10.bloomgpb.Filter\"y\n\x06\x46ilter\x12\x0c\n\x04Name\x18\x01 \x01(\t\x12\x10\n\x08\x43\x61pacity\x18\x02 \x01(\x03\x12\x0c\n\x04Hits\x18\x03 \x01(\x03\x12\x0e\n\x06Misses\x18\x04 \x01(\x03\x12\x0e\n\x06\x43hecks\x18\x05 \x01(\x03\x12\x13\n\x0bProbability\x18\x06 \x01(\x01\x12\x0c\n\x04Keys\x18\x07 \x01(\x03*\"\n\x06Status\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01*B\n\tOperation\x12\x0b\n\x07INVALID\x10\x00\x12\n\n\x06\x43REATE\x10\x01\x12\x07\n\x03\x41\x44\x44\x10\x02\x12\t\n\x05\x43LEAR\x10\x03\x12\x08\n\x04\x44ROP\x10\x04\x32\x8a\x04\n\x05\x42loom\x12=\n\x0c\x43reateFilter\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12>\n\x0bListFilters\x12\x15.bloomgpb.ListRequest\x1a\x16.bloomgpb.ListResponse\"\x00\x12\x37\n\x04Info\x12\x15.bloomgpb.ListRequest\x1a\x16.bloomgpb.InfoResponse\"\x00\x12\x31\n\x03\x41\x64\x64\x12\x14.bloomgpb.KeyRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x34\n\x03Has\x12\x14.bloomgpb.KeyRequest\x1a\x15.bloomgpb.HasResponse\"\x00\x12\x36\n\x05\x43lear\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x35\n\x04\x44rop\x12\x17.bloomgpb.FilterRequest\x1a\x12.bloomgpb.Response\"\x00\x12\x34\n\x05\x46lush\x12\x15.bloomgpb.ListRequest\x1a\x12.bloomgpb.Response\"\x00\x12;\n\x08Shutdown\x12\x19.bloomgpb.ShutdownRequest\x1a\x12.bloomgpb.Response\"\x00\x42\x11Z\x0f\x64omain/bloomgpbb\x06proto3')
 )
 
 _STATUS = _descriptor.EnumDescriptor(
@@ -40,14 +40,54 @@ _STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=482,
-  serialized_end=516,
+  serialized_start=503,
+  serialized_end=537,
 )
 _sym_db.RegisterEnumDescriptor(_STATUS)
 
 Status = enum_type_wrapper.EnumTypeWrapper(_STATUS)
+_OPERATION = _descriptor.EnumDescriptor(
+  name='Operation',
+  full_name='bloomgpb.Operation',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='INVALID', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CREATE', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ADD', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CLEAR', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='DROP', index=4, number=4,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=539,
+  serialized_end=605,
+)
+_sym_db.RegisterEnumDescriptor(_OPERATION)
+
+Operation = enum_type_wrapper.EnumTypeWrapper(_OPERATION)
 SUCCESS = 0
 FAILURE = 1
+INVALID = 0
+CREATE = 1
+ADD = 2
+CLEAR = 3
+DROP = 4
 
 
 
@@ -91,8 +131,8 @@ _KEYREQUEST = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='Operation', full_name='bloomgpb.KeyRequest.Operation', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -130,7 +170,7 @@ _KEYREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=59,
-  serialized_end=133,
+  serialized_end=154,
 )
 
 
@@ -153,8 +193,8 @@ _LISTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=135,
-  serialized_end=148,
+  serialized_start=156,
+  serialized_end=169,
 )
 
 
@@ -177,8 +217,8 @@ _SHUTDOWNREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=150,
-  serialized_end=167,
+  serialized_start=171,
+  serialized_end=188,
 )
 
 
@@ -208,8 +248,8 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=169,
-  serialized_end=213,
+  serialized_start=190,
+  serialized_end=234,
 )
 
 
@@ -246,8 +286,8 @@ _HASRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=215,
-  serialized_end=275,
+  serialized_start=236,
+  serialized_end=296,
 )
 
 
@@ -277,8 +317,8 @@ _LISTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=277,
-  serialized_end=306,
+  serialized_start=298,
+  serialized_end=327,
 )
 
 
@@ -308,8 +348,8 @@ _INFORESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=308,
-  serialized_end=357,
+  serialized_start=329,
+  serialized_end=378,
 )
 
 
@@ -381,10 +421,11 @@ _FILTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=359,
-  serialized_end=480,
+  serialized_start=380,
+  serialized_end=501,
 )
 
+_KEYREQUEST.fields_by_name['Operation'].enum_type = _OPERATION
 _RESPONSE.fields_by_name['Status'].enum_type = _STATUS
 _HASRESPONSE.fields_by_name['Status'].enum_type = _STATUS
 _INFORESPONSE.fields_by_name['Filters'].message_type = _FILTER
@@ -398,6 +439,7 @@ DESCRIPTOR.message_types_by_name['ListResponse'] = _LISTRESPONSE
 DESCRIPTOR.message_types_by_name['InfoResponse'] = _INFORESPONSE
 DESCRIPTOR.message_types_by_name['Filter'] = _FILTER
 DESCRIPTOR.enum_types_by_name['Status'] = _STATUS
+DESCRIPTOR.enum_types_by_name['Operation'] = _OPERATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 FilterRequest = _reflection.GeneratedProtocolMessageType('FilterRequest', (_message.Message,), dict(
@@ -473,8 +515,8 @@ _BLOOM = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=519,
-  serialized_end=1041,
+  serialized_start=608,
+  serialized_end=1130,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateFilter',
