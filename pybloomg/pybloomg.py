@@ -214,8 +214,7 @@ class BloomgPipeline(object):
                 req = self._make_key_request(name, keys)
                 resp = self.conn.Has(req)
                 if resp and resp.Has:
-                    for has in resp.Has:
-                        all_resp.append(has)
+                    all_resp.append(resp.Has)
                 else:
                     all_resp.append(BloomgError("pipeline multi failed: %s" % name))
         else:
