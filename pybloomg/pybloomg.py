@@ -1,14 +1,10 @@
 """
 This module implements a client for the Bloomg server.
 """
-from grpc import insecure_channel
 
-from bloomgpb_pb2 import (
-    BloomStub,
-    FilterRequest,
-    KeyRequest,
-    ListRequest,
-)
+import time
+import requests
+from json import dumps
 
 class BloomgError(Exception):
     "Root of exceptions from the client library"
@@ -17,83 +13,133 @@ class BloomgError(Exception):
 
 class BloomgClient(object):
     def __init__(self, server):
-        self.channel = insecure_channel(server)
-        self.conn = BloomStub(self.channel)
+        self.server = server
+        self.session = requests.Session()
+        self.server_info = None
+        self.info_time = 0
+
+    def check_cache(self, name):
+        if not self.server_info or time.time() - self.info_time > 300:
+            self.server_info = self.list_filters()
+            self.info_time = time.time()
+            if name not in self.server_info:
+                raise BloomgError("Filter not exist!")
+
+        if name not in self.server_info:
+            self.server_info = self.list_filters()
+            self.info_time = time.time()
+            if name not in self.server_info:
+                raise BloomgError("Filter not exist!")
 
     def create_filter(self, name):
-        req = FilterRequest()
-        req.Name = name
-        resp = self.conn.CreateFilter(req)
-        if resp and resp.Status == 0:
-            return BloomgFilter(self.conn, name)
-        else:
+        try:
+            headers = {"Content-Type": "application/json"}
+            payload = {"filtername": name}
+
+            resp = self.session.post(
+                self.server + "/create",
+                headers=headers,
+                data=get_json_dump(payload),
+                timeout=60
+            )
+
+            if resp.status_code == 200:
+                return BloomgFilter(self.server, self.session, name)
+            else:
+                raise BloomgError("Bloomg create filter failed!")
+        except:
             raise BloomgError("Bloomg create filter failed!")
 
     def __getitem__(self, name):
         "Gets a BloomgFilter object based on the name."
-        return BloomgFilter(self.conn, name)
+        self.check_cache(name)
+        return BloomgFilter(self.server, self.session, name)
 
 
     def list_filters(self):
-        responses = {}
-        req = ListRequest()
-        resp = self.conn.ListFilters(req)
-        if resp:
-            for name in resp.Names:
-                responses[name] = 'info not implemented'
-        return responses
+        try:
+            headers = {"Content-Type": "application/json"}
+
+            resp = self.session.get(
+                self.server + "/list",
+                headers=headers,
+                timeout=60
+            )
+
+            if resp.status_code == 200:
+                responses = {}
+                data = resp.json().get('data', None)
+                for name in data:
+                    responses[name] = "info not implemented"
+                return responses
+
+            else:
+                raise BloomgError("Bloomg list filter failed!")
+        except:
+            raise BloomgError("Bloomg list filter failed!")
 
 
 class BloomgFilter(object):
     "Provides an interface to a single Bloomd filter"
-    def __init__(self, conn, name):
+    def __init__(self, server, session, name):
         """
         Creates a new BloomgFilter object.
 
-        :Parameters:
-            - conn : The connection to use
-            - name : The name of the filter
         """
-        self.conn = conn
+        self.server = server
+        self.session = session
         self.name = name
-        self.hash_keys = False
-
-
-    def _make_key_request(self, name, keys):
-        req = KeyRequest()
-        req.Name = name
-        if isinstance(keys, str):
-            keys = [keys]
-        for key in keys:
-            if not isinstance(key, str):
-                raise Exception("Invalid key type {}, must be string", type(key))
-            req.Keys.append(key)
-        return req
+        self.hash_keys = True
 
 
     def add(self, key):
-        req = self._make_key_request(self.name, key)
-        resp = self.conn.Add(req)
-        if resp and resp.Status == 0:
-            return True
-        raise BloomgError("add failed: %s" % self.name)
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "filtername": self.name,
+            "keys": [key]
+        }
+
+        try:
+            resp = self.session.post(
+                self.server + "/add",
+                headers=headers,
+                data=get_json_dump(payload),
+                timeout=60
+            )
+
+            if resp.status_code != 200:
+                raise BloomgError("add failed: %s" % self.name)
+
+        except:
+            raise BloomgError("add failed: %s" % self.name)
 
 
     def bulk(self, keys):
-        req = self._make_key_request(self.name, keys)
-        resp = self.conn.Add(req)
-        if resp and resp.Status == 0:
-            return True
-        raise BloomgError("add failed: %s" % self.name)
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "filtername": self.name,
+            "keys": keys
+        }
+
+        try:
+            resp = self.session.post(
+                self.server + "/add",
+                headers=headers,
+                data=get_json_dump(payload),
+                timeout=60
+            )
+
+            if resp.status_code != 200:
+                raise BloomgError("bulk failed: %s" % self.name)
+
+        except:
+            raise BloomgError("bulk failed: %s" % self.name)
 
 
     def drop(self):
         "Deletes the filter from the server. This is permanent"
-        req = FilterRequest()
-        req.Name = self.name
-        resp = self.conn.Drop(req)
-        if not resp or resp.Status != 0:
-            raise BloomgError("drop failed: %s" % self.name)
+
+        raise BloomgError("drop is not supported on pybloomg!")
 
 
     def close(self):
@@ -101,59 +147,83 @@ class BloomgFilter(object):
         Closes the filter on the server.
         """
 
-        raise BloomgError("close is not supported on bloomg!")
+        raise BloomgError("close is not supported on pybloomg!")
 
 
     def clear(self):
-        req = FilterRequest()
-        req.Name = self.name
-        resp = self.conn.Clear(req)
-        if not resp or resp.Status != 0:
-            raise BloomgError("clear failed: %s" % self.name)
+        """
+        Clear the filter on the server.
+        """
+
+        raise BloomgError("clear is not supported on pybloomg!")
 
 
     def __contains__(self, key):
         "Checks if the key is contained in the filter."
-        req = self._make_key_request(self.name, key)
-        resp = self.conn.Has(req)
-        if resp:
-            return resp.Has[0]
-        raise BloomgError("has failed: %s %s" % (self.name, key))
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "filtername": self.name,
+            "keys": [key]
+        }
+
+        try:
+            resp = self.session.post(
+                self.server + "/has",
+                headers=headers,
+                data=get_json_dump(payload),
+                timeout=60
+            )
+
+            if resp.status_code == 200:
+                return resp.json()["data"][0]
+            else:
+                raise BloomgError("Bloomg has failed!")
+        except:
+            raise BloomgError("Bloomg has failed!")
 
 
     def multi(self, keys):
         "Performs a multi command, checks for multiple keys in the filter"
-        req = self._make_key_request(self.name, keys)
-        resp = self.conn.Has(req)
-        if resp:
-            return resp.Has
-        raise BloomgError("multi failed: %s" % self.name)
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "filtername": self.name,
+            "keys": keys
+        }
+
+        try:
+            resp = self.session.post(
+                self.server + "/has",
+                headers=headers,
+                data=get_json_dump(payload),
+                timeout=60
+            )
+
+            if resp.status_code == 200:
+                return resp.json()["data"]
+            else:
+                raise BloomgError("Bloomg multi failed!")
+        except:
+            raise BloomgError("Bloomg multi failed!")
 
 
     def info(self):
-        req = ListRequest()
-        resp = self.conn.Info(req)
-        if resp:
-            return resp.Filters
-        raise BloomgError("info failed: %s" % self.name)
+        raise BloomgError("info is not supported on pybloomg!")
 
 
     def pipeline(self):
         "Creates a BloomgPipeline for pipelining multiple queries"
-        return BloomgPipeline(self.conn, self.name)
+        return BloomgPipeline(self.server, self.session, self.name)
 
 
 class BloomgPipeline(object):
     "Provides an interface to a single Bloomd filter"
-    def __init__(self, conn, name):
+    def __init__(self, server, session, name):
         """
         Creates a new BloomgPipeline object.
 
-        :Parameters:
-            - conn : The connection to use
-            - name : The name of the filter
         """
-        self.conn = conn
+        self.server = server
+        self.session = session
         self.name = name
         self.buf = []
         self.type = ""
@@ -179,18 +249,6 @@ class BloomgPipeline(object):
         return self
 
 
-    def _make_key_request(self, name, keys):
-        req = KeyRequest()
-        req.Name = name
-        if isinstance(keys, str):
-            keys = [keys]
-        for key in keys:
-            if not isinstance(key, str):
-                raise Exception("Invalid key type {}, must be string", type(key))
-            req.Keys.append(key)
-        return req
-
-
     def execute(self):
         """
         Executes the pipelined commands. All commands are sent to
@@ -199,22 +257,42 @@ class BloomgPipeline(object):
         """
         buf = self.buf
         self.buf = []
-
         all_resp = []
+        headers = {"Content-Type": "application/json"}
 
         if self.type == "bulk":
             for name, keys in buf:
-                req = self._make_key_request(name, keys)
-                resp = self.conn.Add(req)
-                if not resp or resp.Status != 0:
+                payload = {
+                    "filtername": self.name,
+                    "keys": keys
+                }
+
+                resp = self.session.post(
+                    self.server + "/add",
+                    headers=headers,
+                    data=get_json_dump(payload),
+                    timeout=60
+                )
+
+                if resp.status_code != 200:
                     all_resp.append(BloomgError("pipeline bulk failed: %s" % name))
 
         elif self.type == "multi":
             for name, keys in buf:
-                req = self._make_key_request(name, keys)
-                resp = self.conn.Has(req)
-                if resp and resp.Has:
-                    all_resp.append(resp.Has)
+                payload = {
+                    "filtername": self.name,
+                    "keys": keys
+                }
+
+                resp = self.session.post(
+                    self.server + "/has",
+                    headers=headers,
+                    data=get_json_dump(payload),
+                    timeout=60
+                )
+
+                if resp.status_code == 200:
+                    all_resp.append(resp.json()["data"])
                 else:
                     all_resp.append(BloomgError("pipeline multi failed: %s" % name))
         else:
@@ -222,3 +300,18 @@ class BloomgPipeline(object):
 
 
         return all_resp
+
+def get_json_dump(obj, encode_class=None):
+    '''
+    Returns the output form json.dumps.
+
+    '''
+    # If there is a character such as 'registered mark' in obj that is encoded using
+    # latin-1 encoding, json.dumps() will fail. Such cases are handled in
+    # the exception block.
+    try:
+        json_dump = dumps(obj, cls=encode_class)
+    except UnicodeDecodeError:
+        json_dump = dumps(obj, cls=encode_class, encoding='latin-1')
+
+    return json_dump
