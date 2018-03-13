@@ -1,7 +1,7 @@
 from setuptools import setup, Command
 
 setup(name='pybloomg',
-      version="2.1.3",
+      version="2.1.4",
       description='Client library to interface with bloomg server',
       author='Thomas Wang',
       author_email='thomas@kiip.me',

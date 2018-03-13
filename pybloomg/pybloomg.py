@@ -47,7 +47,8 @@ class BloomgClient(object):
                 return BloomgFilter(self.server, self.session, name)
             else:
                 raise BloomgError("Bloomg create filter failed!")
-        except:
+        except Exception as e:
+            print("Bloomg create filter failed: %s" % str(e))
             raise BloomgError("Bloomg create filter failed!")
 
     def __getitem__(self, name):
@@ -75,7 +76,8 @@ class BloomgClient(object):
 
             else:
                 raise BloomgError("Bloomg list filter failed!")
-        except:
+        except Exception as e:
+            print("Bloomg list filter failed: %s" % str(e))
             raise BloomgError("Bloomg list filter failed!")
 
 
@@ -110,7 +112,8 @@ class BloomgFilter(object):
             if resp.status_code != 200:
                 raise BloomgError("add failed: %s" % self.name)
 
-        except:
+        except Exception as e:
+            print("add failed: %s" % str(e))
             raise BloomgError("add failed: %s" % self.name)
 
 
@@ -132,7 +135,8 @@ class BloomgFilter(object):
             if resp.status_code != 200:
                 raise BloomgError("bulk failed: %s" % self.name)
 
-        except:
+        except Exception as e:
+            print("bulk failed: %s" % str(e))
             raise BloomgError("bulk failed: %s" % self.name)
 
 
@@ -178,7 +182,8 @@ class BloomgFilter(object):
                 return resp.json()["data"][0]
             else:
                 raise BloomgError("Bloomg has failed!")
-        except:
+        except Exception as e:
+            print("has failed: %s" % str(e))
             raise BloomgError("Bloomg has failed!")
 
 
@@ -202,7 +207,8 @@ class BloomgFilter(object):
                 return resp.json()["data"]
             else:
                 raise BloomgError("Bloomg multi failed!")
-        except:
+        except Exception as e:
+            print("Bloomg multi failed: %s" % str(e))
             raise BloomgError("Bloomg multi failed!")
 
 
